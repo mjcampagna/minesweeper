@@ -2,7 +2,7 @@ import React from 'react';
 
 import Board from './Board.jsx';
 
-export default class Minesweeper extends React.Component {
+class Minesweeper extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -18,3 +18,5 @@ export default class Minesweeper extends React.Component {
 		)
 	}
 }
+
+export default Minesweeper;
