@@ -12,17 +12,35 @@ export default class Board extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		this.generateNewBoard( this.state.gridSize );
+	}
+
 	randomizeCoordinate(gridSize) {
 		return Math.floor( Math.random() * gridSize );
 	}
 
+	gameOver() {
+		console.log('BOOM!');
+	}
+
 	handleClickOnCell(event) {
+
+		const board = this.state.board;
 		const target = event.target;
 		const row = parseInt(target.getAttribute('data-row'), 10);
 		const col = parseInt(target.getAttribute('data-col'), 10);
-		if ( this.state.board[row][col].bomb ) {
-			console.log('BOOM!');
+
+		board[row][col].revealed = true;
+
+		if ( board[row][col].bomb ) {
+			this.gameOver();
 		}
+
+		this.setState({
+			board: board
+		})
+
 	}
 
 	distributeBombs(board, bombs) {
@@ -31,6 +49,24 @@ export default class Board extends React.Component {
 			const col = this.randomizeCoordinate(this.state.gridSize);
 			if ( board[row][col].bomb === false ) {
 				board[row][col].bomb = true;
+			}
+		}
+		return board;
+	}
+
+	findNeighboringBombs(board) {
+		for ( let row = 0; row < this.state.gridSize; row++ ) {
+			for ( let col = 0; col < this.state.gridSize; col++ ) {
+				let near = board[row][col].near;
+				near = board[row-1] && board[row-1][col] !== undefined && board[row-1][col].bomb ? near += 1 : near;
+				near = board[row-1] && board[row-1][col+1] && board[row-1][col+1].bomb ? near += 1 : near;
+				near = board[row][col+1] && board[row][col+1].bomb ? near += 1 : near;
+				near = board[row+1] && board[row+1][col+1] && board[row+1][col+1].bomb ? near += 1 : near;
+				near = board[row+1] && board[row+1][col] && board[row+1][col].bomb ? near += 1 : near;
+				near = board[row+1] && board[row+1][col-1] && board[row+1][col-1].bomb ? near += 1 : near;
+				near = board[row][col-1] && board[row][col-1].bomb ? near += 1 : near;
+				near = board[row-1] && board[row-1][col-1] && board[row-1][col-1].bomb ? near += 1 : near;
+				board[row][col].near = near;
 			}
 		}
 		return board;
@@ -49,8 +85,12 @@ export default class Board extends React.Component {
 			}
 			board.push(newArray);
 		}
+
+		board = this.distributeBombs(board, this.state.bombs);
+		board = this.findNeighboringBombs(board);
+
 		this.setState({
-			board: this.distributeBombs(board, this.state.bombs)
+			board: board
 		});
 	}
 
@@ -66,7 +106,8 @@ export default class Board extends React.Component {
 						{row.map( (col, x) => (
 							<li key={'col' + x} className="col">
 								<button type="button" data-row={y} data-col={x} 
-									onClick={(e) => this.handleClickOnCell(e)}
+									className={col.revealed ? null : 'hidden'} 
+									onClick={(e) => this.handleClickOnCell(e)} 
 								>
 									{col.bomb ? 'B' : col.near}
 								</button>
@@ -76,10 +117,6 @@ export default class Board extends React.Component {
 				))}
 			</ul>
 		)
-	}
-
-	componentDidMount() {
-		this.generateNewBoard( this.state.gridSize );
 	}
 
 	render() {

@@ -92,5 +92,10 @@ ul#board li.row li button {
 	outline: none;
 	padding: 0;
 	position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+	user-select: none;
 	width: 100%;
+}
+
+ul#board li.row li button.hidden {
+	background-color: rgba(255,0,0,0.5);
 }
