@@ -16,6 +16,15 @@ export default class Board extends React.Component {
 		return Math.floor( Math.random() * gridSize );
 	}
 
+	handleClickOnCell(event) {
+		const target = event.target;
+		const row = parseInt(target.getAttribute('data-row'), 10);
+		const col = parseInt(target.getAttribute('data-col'), 10);
+		if ( this.state.board[row][col].bomb ) {
+			console.log('BOOM!');
+		}
+	}
+
 	distributeBombs(board, bombs) {
 		for ( var i = 0; i < bombs; i++ ) {
 			const row = this.randomizeCoordinate(this.state.gridSize);
@@ -56,7 +65,9 @@ export default class Board extends React.Component {
 					<li key={'row' + y} className="row"><ul>
 						{row.map( (col, x) => (
 							<li key={'col' + x} className="col">
-								<button type="button" data-row={y} data-col={x}>
+								<button type="button" data-row={y} data-col={x} 
+									onClick={(e) => this.handleClickOnCell(e)}
+								>
 									{col.bomb ? 'B' : col.near}
 								</button>
 							</li>
