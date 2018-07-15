@@ -42,7 +42,7 @@ body {
 }
 
 #stage {
-	padding: 2rem;
+	padding: 0 12px 0;
 	text-align: center;
 }
 
@@ -59,6 +59,7 @@ ul#board {
 	border-radius: 2px;
 	display: inline-block;
 	max-width: 100%;
+	position: relative;
 	width: 512px;
 }
 
@@ -106,4 +107,16 @@ ul#board li.row li button.flagged,
 ul#board li.row li button.hidden.flagged {
 	background-color: red;
 	color: red;
+}
+
+#overlay {
+	background-color: #FF0000;
+	opacity: 1;
+	padding: 0;
+	position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+	transition: 2.5s opacity ease-in-out;
+}
+
+#overlay.hidden {
+	opacity: 0.25;
 }

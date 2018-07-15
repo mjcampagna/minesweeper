@@ -1,5 +1,6 @@
 export default class Game {
 	constructor(gridSize, bombs) {
+		this.isGameOver = false;
 		this.gridSize = gridSize;
 		this.bombs = bombs;
 		this.totalRevealed = 0;
@@ -83,6 +84,20 @@ export default class Game {
 		return board;
 	}
 
+	revealAllBombs(board) {
+		for ( let row = 0; row < this.gridSize; row++ ) {
+			for ( let col = 0; col < this.gridSize; col++ ) {
+				if ( board[row][col].bomb ) {
+					board[row][col].revealed = true;
+				} else {
+					board[row][col].near = '';
+				}
+				board[row][col].revealed = true;
+			}
+		}
+		return board;
+	}
+
 	playerAction(event, board, row, col) {
 		if ( !board[row][col].revealed ) {
 
@@ -98,7 +113,7 @@ export default class Game {
 					if ( this.totalRevealed === 0 ) {
 						board = this.generateNewBoard( this.gridSize );
 					} else {
-						this.gameOver();
+						board = this.gameOver(board);
 						return board;
 					}
 				}
@@ -111,8 +126,9 @@ export default class Game {
 		return board;
 	}
 
-	gameOver() {
-		console.log('BOOM!');
+	gameOver(board) {
+		this.isGameOver = true;
+		return this.revealAllBombs(board);
 	}
 
 } // Game 

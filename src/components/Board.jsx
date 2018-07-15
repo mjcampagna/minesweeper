@@ -15,6 +15,10 @@ export default class Board extends React.Component {
 	}
 
 	componentDidMount() {
+		this.newGame();
+	}
+
+	newGame() {
 		this.game = new Game(
 			this.state.gridSize,
 			this.state.bombs
@@ -34,6 +38,10 @@ export default class Board extends React.Component {
 		board = this.game.playerAction(event, board, row, col);
 		this.setState({
 			board: board
+		}, () => {
+			if ( this.game.isGameOver ) {
+				this.props.gameOver();
+			}
 		});
 	}
 
@@ -43,25 +51,28 @@ export default class Board extends React.Component {
 
 	renderBoard() {
 		return (
-			<ul id="board">
-				{this.state.board.map( (row, y) => (
-					<li key={'row' + y} className="row"><ul>
-						{row.map( (col, x) => (
-							<li key={'col' + x} className="col">
-								<button type="button" data-row={y} data-col={x} 
-									className={[
-										col.revealed ? null : 'hidden', 
-										col.flag ? 'flagged' : null
-									].join(' ')} 
-									onClick={(e) => this.handleClickOnCell(e)} 
-								>
-									{col.bomb ? 'B' : col.near}
-								</button>
-							</li>
-						))}
-					</ul></li>
-				))}
-			</ul>
+			<React.Fragment>
+				<ul id="board">
+					{this.state.board.map( (row, y) => (
+						<li key={'row' + y} className="row"><ul>
+							{row.map( (col, x) => (
+								<li key={'col' + x} className="col">
+									<button type="button" data-row={y} data-col={x} 
+										className={[
+											col.revealed ? null : 'hidden', 
+											col.flag ? 'flagged' : null
+										].join(' ')} 
+										onClick={(e) => this.handleClickOnCell(e)} 
+									>
+										{col.bomb ? 'B' : col.near}
+									</button>
+								</li>
+							))}
+						</ul></li>
+					))}
+					{this.props.isGameOver && <li id="overlay"></li>}
+				</ul>
+			</React.Fragment>
 		)
 	}
 
