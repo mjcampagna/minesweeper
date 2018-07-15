@@ -25,13 +25,12 @@ export default class Board extends React.Component {
 	}
 
 	handleClickOnCell(event) {
-
-		const board = this.state.board;
+		let board = this.state.board;
 		const target = event.target;
 		const row = parseInt(target.getAttribute('data-row'), 10);
 		const col = parseInt(target.getAttribute('data-col'), 10);
 
-		board[row][col].revealed = true;
+		board = this.revealUninterestingNeighbors(board, row, col);
 
 		if ( board[row][col].bomb ) {
 			this.gameOver();
@@ -40,7 +39,24 @@ export default class Board extends React.Component {
 		this.setState({
 			board: board
 		})
+	}
 
+	revealUninterestingNeighbors(board, row, col) {
+		if ( !board[row][col].revealed ) {
+			board[row][col].revealed = true;
+			for ( let r = row-1; r <= row+1; r++ ) {
+				if ( board[r] ){
+					for ( let c = col-1; c <= col+1; c++ ) {
+						if ( board[r][c] ) {
+							if ( board[row][col].near === 0 ) {
+								board = this.revealUninterestingNeighbors(board, r, c);
+							}
+						}
+					}
+				}
+			}	
+		}
+		return board;
 	}
 
 	distributeBombs(board, bombs) {
