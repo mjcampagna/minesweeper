@@ -8,16 +8,27 @@ export default class Board extends React.Component {
 		this.state = {
 			board: null,
 			bombs: 10,
-			gridSize: 10
+			gridSize: 10,
+			totalRevealed: 0
 		}
 	}
 
 	componentDidMount() {
-		this.generateNewBoard( this.state.gridSize );
+		const board = this.generateNewBoard( this.state.gridSize );
+		this.setState({
+			board: board
+		});
 	}
 
 	randomizeCoordinate(gridSize) {
 		return Math.floor( Math.random() * gridSize );
+	}
+
+	nextTurn(board, row, col) {
+		board = this.revealUninterestingNeighbors(board, row, col);
+		this.setState({
+			board: board
+		})
 	}
 
 	gameOver() {
@@ -30,20 +41,29 @@ export default class Board extends React.Component {
 		const row = parseInt(target.getAttribute('data-row'), 10);
 		const col = parseInt(target.getAttribute('data-col'), 10);
 
-		board = this.revealUninterestingNeighbors(board, row, col);
-
 		if ( board[row][col].bomb ) {
-			this.gameOver();
+			if ( this.state.totalRevealed === 0 ) {
+				board = this.generateNewBoard( this.state.gridSize );
+				this.setState({
+					board: board
+				}, () => {
+					this.nextTurn(board, row, col);
+					return;
+				});
+			} else {
+				this.gameOver();
+			}
 		}
 
-		this.setState({
-			board: board
-		})
+		this.nextTurn(board, row, col);
 	}
 
 	revealUninterestingNeighbors(board, row, col) {
 		if ( !board[row][col].revealed ) {
 			board[row][col].revealed = true;
+			this.setState({
+				totalRevealed: this.state.totalRevealed + 1
+			})
 			for ( let r = row-1; r <= row+1; r++ ) {
 				if ( board[r] ){
 					for ( let c = col-1; c <= col+1; c++ ) {
@@ -106,10 +126,7 @@ export default class Board extends React.Component {
 
 		board = this.distributeBombs(board, this.state.bombs);
 		board = this.findNeighboringBombs(board);
-
-		this.setState({
-			board: board
-		});
+		return board;
 	}
 
 	renderLoading() {
