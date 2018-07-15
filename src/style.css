@@ -114,7 +114,7 @@ ul#board li.row li button.hidden.flagged {
 	opacity: 1;
 	padding: 0;
 	position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-	transition: 2.5s opacity ease-in-out;
+	transition: 1.25s opacity ease-in-out;
 }
 
 #overlay.hidden {

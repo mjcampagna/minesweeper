@@ -6,7 +6,8 @@ class Minesweeper extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			games: 0,
+			bombs: 10,
+			gridSize: 10,
 			gameOver: false
 		}
 		this.handleGameOver = this.handleGameOver.bind(this);
@@ -30,6 +31,8 @@ class Minesweeper extends React.Component {
 			<div id="stage">
 				<h1>Minesweeper</h1>
 				<Board 
+					bombs={this.state.bombs} 
+					gridSize={this.state.gridSize} 
 					gameOver={this.handleGameOver} 
 					isGameOver={this.state.gameOver} 
 				/>

@@ -8,9 +8,7 @@ export default class Board extends React.Component {
 		super(props);
 		this.game = null;
 		this.state = {
-			board: null,
-			bombs: 10,
-			gridSize: 10
+			board: null
 		}
 	}
 
@@ -20,10 +18,10 @@ export default class Board extends React.Component {
 
 	newGame() {
 		this.game = new Game(
-			this.state.gridSize,
-			this.state.bombs
+			this.props.gridSize,
+			this.props.bombs
 		);
-		const board = this.game.generateNewBoard( this.state.gridSize );
+		const board = this.game.generateNewBoard( this.props.gridSize );
 		this.setState({
 			board: board
 		});
