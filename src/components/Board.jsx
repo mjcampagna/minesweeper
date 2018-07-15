@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Loader from './Loader.jsx';
+import Game from './gameLogic.js';
 
 export default class Board extends React.Component {
 	constructor(props) {
@@ -40,22 +41,33 @@ export default class Board extends React.Component {
 		const target = event.target;
 		const row = parseInt(target.getAttribute('data-row'), 10);
 		const col = parseInt(target.getAttribute('data-col'), 10);
-
-		if ( board[row][col].bomb ) {
-			if ( this.state.totalRevealed === 0 ) {
-				board = this.generateNewBoard( this.state.gridSize );
+		if ( !board[row][col].revealed ) {
+			if ( event.ctrlKey || event.metaKey ) {
+				board[row][col].flag = !board[row][col].flag;
 				this.setState({
 					board: board
-				}, () => {
-					this.nextTurn(board, row, col);
-					return;
 				});
-			} else {
-				this.gameOver();
+				return;
+			}
+	
+			if ( !board[row][col].flag ) {
+				if ( board[row][col].bomb ) {
+					if ( this.state.totalRevealed === 0 ) {
+						board = this.generateNewBoard( this.state.gridSize );
+						this.setState({
+							board: board
+						}, () => {
+							this.nextTurn(board, row, col);
+							return;
+						});
+					} else {
+						this.gameOver();
+					}
+				}
+	
+				this.nextTurn(board, row, col);
 			}
 		}
-
-		this.nextTurn(board, row, col);
 	}
 
 	revealUninterestingNeighbors(board, row, col) {
@@ -117,6 +129,7 @@ export default class Board extends React.Component {
 			for ( let i = 0; i < newArray.length; i++ ) {
 				newArray[i] = {
 					bomb: false,
+					flag: false,
 					near: 0,
 					revealed: false
 				};
@@ -141,7 +154,10 @@ export default class Board extends React.Component {
 						{row.map( (col, x) => (
 							<li key={'col' + x} className="col">
 								<button type="button" data-row={y} data-col={x} 
-									className={col.revealed ? null : 'hidden'} 
+									className={[
+										col.revealed ? null : 'hidden', 
+										col.flag ? 'flagged' : null
+									].join(' ')} 
 									onClick={(e) => this.handleClickOnCell(e)} 
 								>
 									{col.bomb ? 'B' : col.near}
