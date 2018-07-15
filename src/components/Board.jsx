@@ -65,6 +65,8 @@ export default class Board extends React.Component {
 			const col = this.randomizeCoordinate(this.state.gridSize);
 			if ( board[row][col].bomb === false ) {
 				board[row][col].bomb = true;
+			} else {
+				i--;
 			}
 		}
 		return board;
