@@ -2,11 +2,8 @@ import 'normalize.css';
 import './style.css';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Minesweeper from './components/Minesweeper.jsx';
 
-ReactDOM.render(
-	<Minesweeper />,
-	document.getElementById('minesweeper')
-);
+createRoot(document.getElementById('minesweeper')).render(<Minesweeper />);
